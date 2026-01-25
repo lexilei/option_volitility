@@ -1,0 +1,62 @@
+Metadata-Version: 2.4
+Name: quant-statarb-kalman
+Version: 0.1.0
+Summary: Sector-neutral stat-arb with Kalman dynamic hedge and walk-forward backtest
+License: MIT
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: numpy>=1.24
+Requires-Dist: pandas>=2.0
+Requires-Dist: pyyaml>=6.0
+Requires-Dist: scipy>=1.10
+Requires-Dist: statsmodels>=0.14
+Requires-Dist: yfinance>=0.2
+Requires-Dist: requests>=2.31
+Requires-Dist: pyarrow>=14.0
+
+# Quant StatArb Kalman
+
+Goal: sector/factor-neutral stat-arb (pairs/spread) with Kalman-filter dynamic hedge ratios, local backtests, and a paper-trading loop (Alpaca), with a path to AWS scheduling.
+
+Constraints:
+- Frequency: daily (EOD) first; extendable to hourly.
+- Universe: S&P 500 or custom pool (>=200 symbols).
+- Neutrality: market beta ~0 and sector-neutral (GICS).
+- Costs: commission + slippage (bps) + borrow fee (optional).
+- Broker: Alpaca paper (later IBKR).
+- Ops: scheduled pipeline + logs + alerts.
+
+Repo layout:
+```
+quant-statarb-kalman/
+├── pyproject.toml
+├── README.md
+├── configs/
+│   ├── universe.yaml
+│   ├── backtest.yaml
+│   └── live.yaml
+├── data/
+│   ├── raw/
+│   └── processed/
+├── statarb/
+├── execution/
+├── infrastructure/
+└── tests/
+```
+
+Assumptions:
+- Signal is generated on close and traded next day (configurable).
+- No lookahead bias: selection and parameters use rolling windows.
+- Data download source is pluggable via `statarb.data.fetch_prices`.
+
+Milestones:
+- A: data layer + pair selection.
+- B: Kalman + signals.
+- C: portfolio neutrality + walk-forward backtest.
+- D: paper trading loop.
+- E: AWS scheduling.
+
+Quick start (after implementation):
+- `statarb download-data --config configs/universe.yaml`
+- `statarb select-pairs --config configs/backtest.yaml`
+- `statarb backtest --config configs/backtest.yaml`

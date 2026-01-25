@@ -1,0 +1,2 @@
+[console_scripts]
+statarb = statarb.cli:main

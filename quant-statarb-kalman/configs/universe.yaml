@@ -1,0 +1,19 @@
+universe:
+  symbols:
+    - SPY
+    - AAPL
+    - MSFT
+    - AMZN
+    - META
+    - GOOGL
+    - NVDA
+    - JPM
+    - JNJ
+    - XOM
+sector_map:
+  source: "csv"
+  path: "data/raw/sector_map.csv"
+prices:
+  source: "yfinance"
+  start: "2018-01-01"
+  end: "2024-12-31"
