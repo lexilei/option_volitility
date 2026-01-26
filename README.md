@@ -47,6 +47,29 @@ Risky/tuning choices (review before relying on results):
 - `pval_thresh` set to 0.1 in backtest config; weaker statistical evidence for pairing.
 - `sector_map.csv` currently marks most symbols as `UNKNOWN`; sector neutrality isn't enforced yet.
 
+Current findings (Jan 26, 2026 run):
+- Universe configured: 200 tickers; retained after missing filter: 194.
+- Date range: 2018-01-02 to 2024-12-30 (daily).
+- Selected pairs: 1 (PNC-TFC), p-value 0.0653 (corr_threshold 0.8, pval_thresh 0.1).
+- Backtest metrics: CAGR 0.17%, Sharpe 0.20, Sortino 0.21, MaxDD -1.41%.
+
+Current parameters (configs):
+- train_window 252, corr_lookback 252, step_window 21
+- corr_threshold 0.8, pval_thresh 0.1
+- half_life_min 1, half_life_max 60
+- kalman R=1e-3, Q=1e-4
+- signals entry_z 2.0, exit_z 0.5, stop_z 4.0
+- portfolio max_pair_w 0.02, w_max 0.02, gross_max 1.0
+- costs slippage_bps 2.0
+
+Key equations (simplified):
+- Spread: s_t = y_t - beta_t * x_t
+- Z-score: z_t = (s_t - mean_L(s)) / std_L(s), L = max(10, 2*half_life)
+- Pair weight (per signal): w_pair = clip(signal, -max_pair_w, max_pair_w)
+- Asset weights: w_y += w_pair; w_x -= w_pair * beta_t
+- Beta neutralization: w <- w - delta * beta / (sum(beta^2) + 1e-12)
+- Slippage cost: cost_t = turnover_t * (slippage_bps / 1e4)
+
 Quick start (after implementation):
 - `statarb download-data --config configs/universe.yaml`
 - `statarb select-pairs --config configs/backtest.yaml`
