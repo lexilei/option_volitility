@@ -39,6 +39,15 @@ def _cmd_download_data(config_path: str, output_path: str) -> None:
     print(res.missing_report.head(10))
 
 
+def _as_float(value, default: float) -> float:
+    """Parse numeric config values that may be strings."""
+    if value is None:
+        return default
+    if isinstance(value, str):
+        return float(value)
+    return float(value)
+
+
 def _cmd_select_pairs(config_path: str, prices_path: str, output_path: str) -> None:
     with open(config_path, "r", encoding="utf-8") as f:
         cfg = yaml.safe_load(f)
@@ -111,15 +120,15 @@ def _cmd_backtest(config_path: str, prices_path: str) -> None:
         pval_thresh=cfg.get("pval_thresh", 0.05),
         half_life_min=cfg.get("half_life_min", 2),
         half_life_max=cfg.get("half_life_max", 20),
-        kalman_R=cfg.get("kalman", {}).get("R", 1e-3),
-        kalman_Q=cfg.get("kalman", {}).get("Q", 1e-4),
+        kalman_R=_as_float(cfg.get("kalman", {}).get("R"), 1e-3),
+        kalman_Q=_as_float(cfg.get("kalman", {}).get("Q"), 1e-4),
         entry_z=cfg.get("signals", {}).get("entry_z", 2.0),
         exit_z=cfg.get("signals", {}).get("exit_z", 0.5),
         stop_z=cfg.get("signals", {}).get("stop_z", 4.0),
         max_pair_w=cfg.get("portfolio", {}).get("max_pair_w", 0.02),
         w_max=cfg.get("portfolio", {}).get("w_max", 0.02),
         gross_max=cfg.get("portfolio", {}).get("gross_max", 1.0),
-        slippage_bps=cfg.get("costs", {}).get("slippage_bps", 2.0),
+        slippage_bps=_as_float(cfg.get("costs", {}).get("slippage_bps"), 2.0),
     )
 
     returns = equity.pct_change().dropna()
@@ -173,7 +182,10 @@ def _cmd_generate_weights(config_path: str, prices_path: str) -> None:
         y = prices[pair.y]
         x = prices[pair.x]
         _, beta_s, spread = kalman_regression(
-            y, x, R=cfg.get("kalman", {}).get("R", 1e-3), Q=cfg.get("kalman", {}).get("Q", 1e-4)
+            y,
+            x,
+            R=_as_float(cfg.get("kalman", {}).get("R"), 1e-3),
+            Q=_as_float(cfg.get("kalman", {}).get("Q"), 1e-4),
         )
         lookback = max(10, pair.half_life * 2)
         z = compute_zscore(spread, lookback=lookback)
