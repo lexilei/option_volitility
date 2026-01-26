@@ -4,9 +4,9 @@ train_window: 252
 step_window: 21
 corr_lookback: 252
 max_pairs: 50
-pval_thresh: 0.05
-half_life_min: 2
-half_life_max: 20
+pval_thresh: 0.25
+half_life_min: 1
+half_life_max: 60
 kalman:
   R: 1e-3
   Q: 1e-4
