@@ -43,7 +43,8 @@ Milestones:
 Risky/tuning choices (review before relying on results):
 - `prices.max_missing_pct` set to 0.2 to keep more symbols; this can retain stale/partial series.
 - `align_calendar` forward-fills missing prices; this may hide gaps and bias cointegration tests.
-- `pval_thresh` set to 0.25 in backtest config; weaker statistical evidence for pairing.
+- `corr_threshold` set to 0.8; pairs below this correlation are excluded before cointegration tests.
+- `pval_thresh` set to 0.1 in backtest config; weaker statistical evidence for pairing.
 - `sector_map.csv` currently marks most symbols as `UNKNOWN`; sector neutrality isn't enforced yet.
 
 Quick start (after implementation):

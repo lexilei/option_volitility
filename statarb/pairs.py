@@ -23,14 +23,18 @@ def find_candidate_pairs(
     prices: pd.DataFrame,
     top_k_per_symbol: int = 5,
     corr_lookback: int = 252,
+    corr_threshold: float | None = None,
 ) -> List[Tuple[str, str]]:
     """Return candidate pairs by correlation prefilter."""
     if len(prices) < corr_lookback:
         raise ValueError("Not enough data for corr_lookback")
-    corr = prices.tail(corr_lookback).pct_change().corr()
+    corr = prices.tail(corr_lookback).pct_change(fill_method=None).corr()
     pairs: List[Tuple[str, str]] = []
     for sym in corr.columns:
-        top = corr[sym].drop(sym).nlargest(top_k_per_symbol).index
+        series = corr[sym].drop(sym)
+        if corr_threshold is not None:
+            series = series[series > corr_threshold]
+        top = series.nlargest(top_k_per_symbol).index
         for other in top:
             if (other, sym) not in pairs:
                 pairs.append((sym, other))
@@ -60,6 +64,7 @@ def select_pairs(
     sector_map: Dict[str, str],
     train_window: int = 252,
     corr_lookback: int = 252,
+    corr_threshold: float | None = None,
     min_half_life: int = 2,
     max_half_life: int = 20,
     pval_thresh: float = 0.05,
@@ -69,7 +74,11 @@ def select_pairs(
     if len(prices) < train_window:
         raise ValueError("Not enough data for train_window")
     train = prices.tail(train_window)
-    candidates = find_candidate_pairs(train, corr_lookback=corr_lookback)
+    candidates = find_candidate_pairs(
+        train,
+        corr_lookback=corr_lookback,
+        corr_threshold=corr_threshold,
+    )
     selected: List[Pair] = []
     for y, x in candidates:
         if sector_map.get(y) != sector_map.get(x):

@@ -3,8 +3,9 @@ spy_symbol: "SPY"
 train_window: 252
 step_window: 21
 corr_lookback: 252
+corr_threshold: 0.8
 max_pairs: 50
-pval_thresh: 0.01
+pval_thresh: 0.1
 half_life_min: 1
 half_life_max: 60
 kalman:

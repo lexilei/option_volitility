@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Iterable
+from typing import Iterable, List
 
 import pandas as pd
 import yfinance as yf
@@ -12,6 +12,24 @@ import yfinance as yf
 class PriceFetchResult:
     prices: pd.DataFrame
     missing_report: pd.Series
+
+
+def _normalize_yf_download(df: pd.DataFrame, symbols: List[str]) -> pd.DataFrame:
+    if df.empty:
+        return df
+    if isinstance(df.columns, pd.MultiIndex):
+        if ("Adj Close" in df.columns.get_level_values(0)) or ("Adj Close" in df.columns.get_level_values(1)):
+            try:
+                df = df["Adj Close"]
+            except KeyError:
+                df = df.xs("Adj Close", axis=1, level=0, drop_level=True)
+        else:
+            df = df["Close"]
+    else:
+        col = "Adj Close" if "Adj Close" in df.columns else "Close"
+        df = df[[col]].rename(columns={col: symbols[0]})
+    df.index = pd.to_datetime(df.index).tz_localize(None)
+    return df
 
 
 def fetch_prices(symbols: Iterable[str], start: str, end: str, source: str) -> pd.DataFrame:
@@ -24,30 +42,49 @@ def fetch_prices(symbols: Iterable[str], start: str, end: str, source: str) -> p
         raise ValueError("symbols is empty")
     if source != "yfinance":
         raise NotImplementedError("Implement price download for source=%s" % source)
-    df = yf.download(
-        tickers=" ".join(symbols),
-        start=start,
-        end=end,
-        auto_adjust=True,
-        group_by="column",
-        progress=False,
-    )
-    if df.empty:
+    # yfinance can be flaky for large batches; download in chunks and merge.
+    frames: List[pd.DataFrame] = []
+    batch_size = 50
+    for i in range(0, len(symbols), batch_size):
+        chunk = symbols[i : i + batch_size]
+        df = yf.download(
+            tickers=" ".join(chunk),
+            start=start,
+            end=end,
+            auto_adjust=True,
+            group_by="column",
+            progress=False,
+        )
+        df = _normalize_yf_download(df, chunk)
+        if not df.empty:
+            frames.append(df)
+    if not frames:
         raise ValueError("No data returned from yfinance")
-    if isinstance(df.columns, pd.MultiIndex):
-        if ("Adj Close" in df.columns.get_level_values(0)) or ("Adj Close" in df.columns.get_level_values(1)):
-            try:
-                df = df["Adj Close"]
-            except KeyError:
-                df = df.xs("Adj Close", axis=1, level=0, drop_level=True)
-        else:
-            df = df["Close"]
-    else:
-        df = df.rename(columns={"Adj Close": "adj_close", "Close": "close"})
-        df = df[["adj_close"]] if "adj_close" in df.columns else df[["close"]]
-    df.index = pd.to_datetime(df.index).tz_localize(None)
-    df = df.sort_index()
-    return df
+    out = pd.concat(frames, axis=1)
+    out = out.loc[:, ~out.columns.duplicated()]
+
+    # Recover any missing symbols by downloading individually.
+    missing = [s for s in symbols if s not in out.columns]
+    if missing:
+        recovered: List[pd.DataFrame] = []
+        for sym in missing:
+            df = yf.download(
+                tickers=sym,
+                start=start,
+                end=end,
+                auto_adjust=True,
+                group_by="column",
+                progress=False,
+            )
+            df = _normalize_yf_download(df, [sym])
+            if not df.empty and sym in df.columns:
+                recovered.append(df)
+        if recovered:
+            out = pd.concat([out] + recovered, axis=1)
+            out = out.loc[:, ~out.columns.duplicated()]
+
+    out = out.sort_index()
+    return out
 
 
 def align_calendar(df: pd.DataFrame, max_missing_pct: float = 0.05) -> PriceFetchResult:
