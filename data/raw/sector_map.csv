@@ -1,202 +1,103 @@
 symbol,sector
 SPY,INDEX
-NVDA,UNKNOWN
-AAPL,UNKNOWN
-GOOG,UNKNOWN
-MSFT,UNKNOWN
-AMZN,UNKNOWN
-META,UNKNOWN
-TSLA,UNKNOWN
-LLY,UNKNOWN
-JPM,UNKNOWN
-V,UNKNOWN
-XOM,UNKNOWN
-JNJ,UNKNOWN
-MA,UNKNOWN
-COST,UNKNOWN
-ABBV,UNKNOWN
-BAC,UNKNOWN
-NFLX,UNKNOWN
-HD,UNKNOWN
-PG,UNKNOWN
-AMD,UNKNOWN
-PLTR,UNKNOWN
-CVX,UNKNOWN
-GE,UNKNOWN
-ORCL,UNKNOWN
-UNH,UNKNOWN
-CSCO,UNKNOWN
-KO,UNKNOWN
-IBM,UNKNOWN
-WFC,UNKNOWN
-CAT,UNKNOWN
-AMAT,UNKNOWN
-LRCX,UNKNOWN
-PM,UNKNOWN
-MRK,UNKNOWN
-GS,UNKNOWN
-MU,UNKNOWN
-RTX,UNKNOWN
-TMO,UNKNOWN
-MCD,UNKNOWN
-MS,UNKNOWN
-CRM,UNKNOWN
-C,UNKNOWN
-DIS,UNKNOWN
-PEP,UNKNOWN
-LIN,UNKNOWN
-AXP,UNKNOWN
-ABT,UNKNOWN
-ISRG,UNKNOWN
-KLAC,UNKNOWN
-BA,UNKNOWN
-AMGN,UNKNOWN
-NEE,UNKNOWN
-GEV,UNKNOWN
-ACN,UNKNOWN
-APH,UNKNOWN
-INTC,UNKNOWN
-SCHW,UNKNOWN
-UBER,UNKNOWN
-TJX,UNKNOWN
-T,UNKNOWN
-QCOM,UNKNOWN
-VZ,UNKNOWN
-BKNG,UNKNOWN
-BLK,UNKNOWN
-SPGI,UNKNOWN
-INTU,UNKNOWN
-GILD,UNKNOWN
-DHR,UNKNOWN
-TXN,UNKNOWN
-PFE,UNKNOWN
-ANET,UNKNOWN
-LOW,UNKNOWN
-BSX,UNKNOWN
-UNP,UNKNOWN
-COF,UNKNOWN
-DE,UNKNOWN
-AVGO,UNKNOWN
-ETN,UNKNOWN
-HON,UNKNOWN
-WELL,UNKNOWN
-ADBE,UNKNOWN
-PANW,UNKNOWN
-SYK,UNKNOWN
-COP,UNKNOWN
-PGR,UNKNOWN
-MDT,UNKNOWN
-ADI,UNKNOWN
-PLD,UNKNOWN
-PH,UNKNOWN
-VRTX,UNKNOWN
-BX,UNKNOWN
-CRWD,UNKNOWN
-CB,UNKNOWN
-LMT,UNKNOWN
-CMCSA,UNKNOWN
-ADP,UNKNOWN
-MCK,UNKNOWN
-CVS,UNKNOWN
-BMY,UNKNOWN
-TMUS,UNKNOWN
-SBUX,UNKNOWN
-MO,UNKNOWN
-SO,UNKNOWN
-CME,UNKNOWN
-NEM,UNKNOWN
-GD,UNKNOWN
-DUK,UNKNOWN
-CEG,UNKNOWN
-MMC,UNKNOWN
-WM,UNKNOWN
-MCO,UNKNOWN
-SNPS,UNKNOWN
-CDNS,UNKNOWN
-MMM,UNKNOWN
-USB,UNKNOWN
-ICE,UNKNOWN
-TT,UNKNOWN
-AMT,UNKNOWN
-KKR,UNKNOWN
-BK,UNKNOWN
-NOC,UNKNOWN
-ORLY,UNKNOWN
-UPS,UNKNOWN
-SHW,UNKNOWN
-TDG,UNKNOWN
-EQIX,UNKNOWN
-DASH,UNKNOWN
-EMR,UNKNOWN
-ECL,UNKNOWN
-NKE,UNKNOWN
-ELV,UNKNOWN
-MAR,UNKNOWN
-REGN,UNKNOWN
-MDLZ,UNKNOWN
-RCL,UNKNOWN
-WDC,UNKNOWN
-WMB,UNKNOWN
-HCA,UNKNOWN
-GLW,UNKNOWN
-CI,UNKNOWN
-PNC,UNKNOWN
-CMI,UNKNOWN
-AON,UNKNOWN
-JCI,UNKNOWN
-FCX,UNKNOWN
-HLT,UNKNOWN
-ITW,UNKNOWN
-WBD,UNKNOWN
-GM,UNKNOWN
-FDX,UNKNOWN
-PWR,UNKNOWN
-CTAS,UNKNOWN
-CSX,UNKNOWN
-TEL,UNKNOWN
-COR,UNKNOWN
-RSG,UNKNOWN
-AJG,UNKNOWN
-NSC,UNKNOWN
-TFC,UNKNOWN
-CL,UNKNOWN
-APO,UNKNOWN
-AEP,UNKNOWN
-PCAR,UNKNOWN
-MSI,UNKNOWN
-TRV,UNKNOWN
-SPG,UNKNOWN
-ROST,UNKNOWN
-EOG,UNKNOWN
-NXPI,UNKNOWN
-URI,UNKNOWN
-APD,UNKNOWN
-BDX,UNKNOWN
-KMI,UNKNOWN
-SLB,UNKNOWN
-MNST,UNKNOWN
-ADSK,UNKNOWN
-AZO,UNKNOWN
-SRE,UNKNOWN
-AFL,UNKNOWN
-PSX,UNKNOWN
-IDXX,UNKNOWN
-ZTS,UNKNOWN
-VLO,UNKNOWN
-ABNB,UNKNOWN
-O,UNKNOWN
-PYPL,UNKNOWN
-MPC,UNKNOWN
-F,UNKNOWN
-STX,UNKNOWN
-LHX,UNKNOWN
-DLR,UNKNOWN
-FTNT,UNKNOWN
-D,UNKNOWN
-VST,UNKNOWN
-ALL,UNKNOWN
-DFS,UNKNOWN
-NDAQ,UNKNOWN
-TGT,UNKNOWN
-BKR,UNKNOWN
-EW,UNKNOWN
+ADBE,Computer Software
+AMD,Semiconductors
+ABNB,Diversified Commercial Services
+ALNY,Biotechnology
+GOOGL,Computer Software
+GOOG,Computer Software
+AMZN,Catalog/Specialty Distribution
+AEP,Electric Utilities
+AMGN,Biotechnology
+ADI,Semiconductors
+AAPL,Computer Manufacturing
+AMAT,Semiconductors
+APP,Computer Software
+ARM,Semiconductors
+ASML,Industrial Machinery
+TEAM,Computer Software
+ADSK,Computer Software
+ADP,Diversified Commercial Services
+AXON,Ordnance & Accessories
+BKR,Oil Equipment & Services
+BKNG,Transportation Services
+AVGO,Semiconductors
+CDNS,Computer Software
+CHTR,Cable & Other Pay Television Services
+CTAS,Garments & Clothing
+CSCO,Computer Communications Equipment
+CCEP,Soft Drinks
+CTSH,EDP Services
+CMCSA,Cable & Other Pay Television Services
+CEG,Electric Utilities
+CPRT,Retail
+CSGP,Real Estate
+COST,Department/Specialty Retail Stores
+CRWD,Computer Software
+CSX,Railroads
+DDOG,Computer Software
+DXCM,Medical/Dental Instruments
+FANG,Oil & Gas Production
+DASH,EDP Services
+EA,Miscellaneous Amusement & Recreation Services
+EXC,Power Generation
+FAST,Construction & Materials
+FER,Military, Government, Technical
+FTNT,Computer Peripheral Equipment
+GEHC,Medical Electronics
+GILD,Biotechnology
+HON,Aerospace
+IDXX,Biotechnology
+INSM,Biotechnology
+INTC,Semiconductors
+INTU,Computer Software
+ISRG,Industrial Specialties
+KDP,Soft Drinks
+KLAC,Electronic Components
+KHC,Packaged Foods
+LRCX,Industrial Machinery
+LIN,Major Chemicals
+MAR,Hotels/Resorts
+MRVL,Semiconductors
+MELI,Catalog/Specialty Distribution
+META,Computer Software
+MCHP,Semiconductors
+MU,Semiconductors
+MSFT,Computer Software
+MSTR,Computer Software
+MDLZ,Packaged Foods
+MPWR,Semiconductors
+MNST,Soft Drinks
+NFLX,Consumer Electronics
+NVDA,Semiconductors
+NXPI,Semiconductors
+ORLY,Auto & Home Supply Stores
+ODFL,Trucking Freight/Courier Services
+PCAR,Motor Vehicles
+PLTR,Computer Software
+PANW,Computer Peripheral Equipment
+PAYX,Diversified Commercial Services
+PYPL,Diversified Commercial Services
+PDD,EDP Services
+PEP,Soft Drinks
+QCOM,Broadcasting & Communications Equipment
+REGN,Biotechnology
+ROP,Computer Software
+ROST,Clothing/Shoe/Accessory Stores
+STX,Electronic Components
+SHOP,Computer Software
+SBUX,Restaurants
+SNPS,Computer Software
+TMUS,Telecommunications Service Providers
+TTWO,Miscellaneous Amusement & Recreation Services
+TSLA,Automobiles & Parts
+TXN,Semiconductors
+TRI,Computer Software
+VRSK,Diversified Commercial Services
+VRTX,Biotechnology
+WMT,Department/Specialty Retail Stores
+WBD,Miscellaneous Amusement & Recreation Services
+WDC,Electronic Components
+WDAY,EDP Services
+XEL,Power Generation
+ZS,EDP Services

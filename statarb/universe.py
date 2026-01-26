@@ -18,5 +18,12 @@ def load_sector_map(source: str, path: str) -> Dict[str, str]:
         df = pd.read_csv(path)
         if "symbol" not in df.columns or "sector" not in df.columns:
             raise ValueError("CSV must include symbol and sector columns")
-        return dict(zip(df["symbol"], df["sector"]))
+        mapping = {}
+        for sym, sector in zip(df["symbol"], df["sector"]):
+            sym = str(sym).strip()
+            if not sym:
+                continue
+            mapping[sym] = sector
+            mapping[sym.replace(".", "-")] = sector
+        return mapping
     raise NotImplementedError(f"Unsupported sector map source: {source}")
