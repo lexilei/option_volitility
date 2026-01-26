@@ -10,6 +10,46 @@ universe:
     - JPM
     - JNJ
     - XOM
+    - BRK-B
+    - V
+    - UNH
+    - PG
+    - MA
+    - HD
+    - CVX
+    - ABBV
+    - KO
+    - PEP
+    - COST
+    - AVGO
+    - ADBE
+    - WMT
+    - DIS
+    - NFLX
+    - CSCO
+    - ORCL
+    - INTC
+    - QCOM
+    - CRM
+    - ACN
+    - TXN
+    - MCD
+    - NKE
+    - LIN
+    - PM
+    - T
+    - VZ
+    - CAT
+    - UPS
+    - HON
+    - IBM
+    - GE
+    - BA
+    - UNP
+    - LOW
+    - RTX
+    - GS
+    - SPGI
 sector_map:
   source: "csv"
   path: "data/raw/sector_map.csv"
@@ -17,3 +57,4 @@ prices:
   source: "yfinance"
   start: "2018-01-01"
   end: "2024-12-31"
+  max_missing_pct: 0.2

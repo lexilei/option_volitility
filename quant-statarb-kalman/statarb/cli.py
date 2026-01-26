@@ -31,7 +31,8 @@ def _cmd_download_data(config_path: str, output_path: str) -> None:
         raise ValueError("prices.start and prices.end are required in config")
 
     df = fetch_prices(symbols, start=start, end=end, source=source)
-    res = align_calendar(df)
+    max_missing_pct = prices_cfg.get("max_missing_pct", 0.2)
+    res = align_calendar(df, max_missing_pct=max_missing_pct)
     save_prices_parquet(res.prices, output_path)
     print("Saved:", output_path)
     print("Missing report (top 10):")

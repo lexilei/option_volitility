@@ -51,12 +51,16 @@ def fetch_prices(symbols: Iterable[str], start: str, end: str, source: str) -> p
 
 
 def align_calendar(df: pd.DataFrame, max_missing_pct: float = 0.05) -> PriceFetchResult:
-    """Align to a common calendar and drop symbols with excessive missing data."""
+    """Align to a common calendar and drop symbols with excessive missing data.
+
+    Keep the full date index to avoid dropping rows due to sparse symbols;
+    forward-fill so pairwise tests can decide on local overlap.
+    """
     if df.index.has_duplicates:
         df = df[~df.index.duplicated(keep="first")]
     missing = df.isna().mean().sort_values(ascending=False)
     keep = missing[missing <= max_missing_pct].index
-    aligned = df.loc[:, keep].dropna(how="any")
+    aligned = df.loc[:, keep].ffill().dropna(how="all")
     return PriceFetchResult(prices=aligned, missing_report=missing)
 
 
