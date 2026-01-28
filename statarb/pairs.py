@@ -17,6 +17,7 @@ class Pair:
     init_beta: float
     half_life: int
     pvalue: float
+    crossings: int | None = None
 
 
 def find_candidate_pairs(
@@ -59,6 +60,16 @@ def estimate_half_life(spread: pd.Series) -> int:
     return int(max(1, round(halflife)))
 
 
+def estimate_crossings(spread: pd.Series) -> int:
+    """Count zero crossings in the spread."""
+    s = spread.dropna()
+    if s.empty:
+        return 0
+    sign = s.apply(lambda v: 1 if v > 0 else (-1 if v < 0 else 0))
+    sign = sign.replace(0, pd.NA).ffill().fillna(0)
+    return int((sign.diff().abs() > 0).sum())
+
+
 def select_pairs(
     prices: pd.DataFrame,
     sector_map: Dict[str, str],
@@ -69,6 +80,7 @@ def select_pairs(
     max_half_life: int = 20,
     pval_thresh: float = 0.05,
     max_pairs: int = 50,
+    rank_by: str = "pvalue",
 ) -> List[Pair]:
     """Select robust pairs within the same sector."""
     if len(prices) < train_window:
@@ -97,7 +109,29 @@ def select_pairs(
         half_life = estimate_half_life(spread)
         if not (min_half_life <= half_life <= max_half_life):
             continue
-        selected.append(Pair(y=y, x=x, sector=sector_map[y], init_beta=beta, half_life=half_life, pvalue=pval))
-        if len(selected) >= max_pairs:
-            break
-    return selected
+        crossings = estimate_crossings(spread)
+        selected.append(
+            Pair(
+                y=y,
+                x=x,
+                sector=sector_map[y],
+                init_beta=beta,
+                half_life=half_life,
+                pvalue=pval,
+                crossings=crossings,
+            )
+        )
+
+    if not selected:
+        return []
+
+    if rank_by == "pvalue":
+        selected.sort(key=lambda p: p.pvalue)
+    elif rank_by == "half_life":
+        selected.sort(key=lambda p: p.half_life)
+    elif rank_by == "crossings":
+        selected.sort(key=lambda p: p.crossings or 0, reverse=True)
+    else:
+        raise ValueError(f"Unknown rank_by: {rank_by}")
+
+    return selected[:max_pairs]

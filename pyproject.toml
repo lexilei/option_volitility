@@ -9,6 +9,7 @@ license = { text = "MIT" }
 dependencies = [
   "numpy>=1.24",
   "pandas>=2.0",
+  "matplotlib>=3.8",
   "pyyaml>=6.0",
   "scipy>=1.10",
   "statsmodels>=0.14",

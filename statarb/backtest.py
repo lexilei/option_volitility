@@ -40,6 +40,7 @@ def walk_forward_backtest(
     pval_thresh: float = 0.05,
     half_life_min: int = 2,
     half_life_max: int = 20,
+    rank_by: str = "pvalue",
     kalman_R: float = 1e-3,
     kalman_Q: float = 1e-4,
     entry_z: float = 2.0,
@@ -78,6 +79,7 @@ def walk_forward_backtest(
             max_half_life=half_life_max,
             pval_thresh=pval_thresh,
             max_pairs=max_pairs,
+            rank_by=rank_by,
         )
 
         train_ret = returns.reindex(train_idx).dropna(how="any")

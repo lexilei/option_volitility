@@ -3,9 +3,10 @@ spy_symbol: "SPY"
 train_window: 252
 step_window: 21
 corr_lookback: 252
-corr_threshold: 0.75
-max_pairs: 50
+corr_threshold: 0.6
+max_pairs: 10
 pval_thresh: 0.05
+rank_by: "pvalue"
 half_life_min: 1
 half_life_max: 60
 kalman:
@@ -13,7 +14,7 @@ kalman:
   Q: 1e-4
 signals:
   entry_z: 2.0
-  exit_z: 0.5
+  exit_z: 0.8
   stop_z: 4.0
 portfolio:
   max_pair_w: 0.02

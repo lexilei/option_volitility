@@ -15,6 +15,7 @@ from .signals import compute_zscore, generate_pair_positions
 from .kalman import kalman_regression
 from .portfolio import aggregate_pair_weights
 from .universe import load_sector_map, load_universe
+from .dashboard import plot_data_coverage, plot_pnl_and_positions, save_coverage_csv
 from execution.rebalance import targets_to_orders
 from execution.risk_manager import check_risk
 
@@ -75,6 +76,7 @@ def _cmd_select_pairs(config_path: str, prices_path: str, output_path: str) -> N
         max_half_life=cfg.get("half_life_max", 20),
         pval_thresh=cfg.get("pval_thresh", 0.05),
         max_pairs=cfg.get("max_pairs", 50),
+        rank_by=cfg.get("rank_by", "pvalue"),
     )
     rows = [
         {
@@ -84,6 +86,7 @@ def _cmd_select_pairs(config_path: str, prices_path: str, output_path: str) -> N
             "init_beta": p.init_beta,
             "half_life": p.half_life,
             "pvalue": p.pvalue,
+            "crossings": p.crossings,
         }
         for p in pairs
     ]
@@ -122,6 +125,7 @@ def _cmd_backtest(config_path: str, prices_path: str) -> None:
         pval_thresh=cfg.get("pval_thresh", 0.05),
         half_life_min=cfg.get("half_life_min", 2),
         half_life_max=cfg.get("half_life_max", 20),
+        rank_by=cfg.get("rank_by", "pvalue"),
         kalman_R=_as_float(cfg.get("kalman", {}).get("R"), 1e-3),
         kalman_Q=_as_float(cfg.get("kalman", {}).get("Q"), 1e-4),
         entry_z=cfg.get("signals", {}).get("entry_z", 2.0),
@@ -174,6 +178,7 @@ def _cmd_generate_weights(config_path: str, prices_path: str) -> None:
         max_half_life=cfg.get("half_life_max", 20),
         pval_thresh=cfg.get("pval_thresh", 0.05),
         max_pairs=cfg.get("max_pairs", 50),
+        rank_by=cfg.get("rank_by", "pvalue"),
     )
 
     latest_date = prices.index[-1]
@@ -259,6 +264,24 @@ def _cmd_trade_paper(config_path: str, prices_path: str) -> None:
     raise SystemExit("live submit not implemented yet")
 
 
+def _cmd_dashboard_data(prices_path: str, output_dir: str) -> None:
+    prices = pd.read_parquet(prices_path)
+    plot_data_coverage(prices, output_dir=output_dir)
+    save_coverage_csv(prices, output_path=f"{output_dir}/coverage_summary.csv")
+    print("Saved data coverage dashboard to:", output_dir)
+
+
+def _cmd_dashboard_pnl(
+    equity_path: str,
+    weights_path: str,
+    output_dir: str,
+) -> None:
+    equity = pd.read_csv(equity_path, index_col=0, parse_dates=True).iloc[:, 0]
+    weights = pd.read_parquet(weights_path)
+    plot_pnl_and_positions(equity, weights, output_dir=output_dir)
+    print("Saved PnL/positions dashboard to:", output_dir)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(prog="statarb")
     sub = parser.add_subparsers(dest="cmd", required=True)
@@ -284,6 +307,15 @@ def main() -> None:
     tp.add_argument("--config", default="configs/live.yaml")
     tp.add_argument("--prices", default="data/processed/prices.parquet")
 
+    dd = sub.add_parser("dashboard-data")
+    dd.add_argument("--prices", default="data/processed/prices.parquet")
+    dd.add_argument("--output", default="data/processed/dashboard/data")
+
+    dp = sub.add_parser("dashboard-pnl")
+    dp.add_argument("--equity", default="data/processed/equity.csv")
+    dp.add_argument("--weights", default="data/processed/weights.parquet")
+    dp.add_argument("--output", default="data/processed/dashboard/pnl")
+
     args = parser.parse_args()
     if args.cmd == "download-data":
         _cmd_download_data(args.config, args.output)
@@ -299,5 +331,11 @@ def main() -> None:
         return
     if args.cmd == "trade-paper":
         _cmd_trade_paper(args.config, args.prices)
+        return
+    if args.cmd == "dashboard-data":
+        _cmd_dashboard_data(args.prices, args.output)
+        return
+    if args.cmd == "dashboard-pnl":
+        _cmd_dashboard_pnl(args.equity, args.weights, args.output)
         return
     raise SystemExit(f"Not implemented yet: {args.cmd}")
