@@ -52,6 +52,9 @@ def walk_forward_backtest(
     slippage_bps: float = 2.0,
 ) -> Tuple[pd.Series, pd.DataFrame, pd.DataFrame]:
     """Return equity curve, pair positions, and daily weights."""
+    # Drop columns with >20% missing before dropping rows
+    missing_pct = prices.isna().mean()
+    prices = prices.loc[:, missing_pct <= 0.20]
     prices = prices.dropna(how="any")
     returns = prices.pct_change().dropna()
     spy_ret = spy.pct_change().dropna()

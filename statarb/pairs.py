@@ -93,7 +93,9 @@ def select_pairs(
     )
     selected: List[Pair] = []
     for y, x in candidates:
-        if sector_map.get(y) != sector_map.get(x):
+        sector_y = sector_map.get(y)
+        sector_x = sector_map.get(x)
+        if sector_y is None or sector_x is None or sector_y != sector_x:
             continue
         ys = train[y].dropna()
         xs = train[x].dropna()

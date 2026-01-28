@@ -4,21 +4,21 @@ train_window: 252
 step_window: 21
 corr_lookback: 252
 corr_threshold: 0.6
-max_pairs: 10
-pval_thresh: 0.05
+max_pairs: 20
+pval_thresh: 0.03
 rank_by: "pvalue"
 half_life_min: 1
 half_life_max: 60
 kalman:
   R: 1e-3
-  Q: 1e-4
+  Q: 2e-3
 signals:
-  entry_z: 2.0
-  exit_z: 0.8
-  stop_z: 4.0
+  entry_z: 1.5
+  exit_z: 0.5
+  stop_z: 3.0
 portfolio:
-  max_pair_w: 0.02
-  w_max: 0.02
+  max_pair_w: 0.15
+  w_max: 0.08
   gross_max: 1.0
 costs:
   slippage_bps: 2.0

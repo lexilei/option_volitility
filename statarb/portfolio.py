@@ -19,7 +19,8 @@ def aggregate_pair_weights(
     for pair in pairs:
         key = f"{pair.y}-{pair.x}"
         signal = pair_positions.get(key, 0.0)
-        w_pair = float(np.clip(signal, -max_pair_w, max_pair_w))
+        # signal is ±1, scale by max_pair_w
+        w_pair = float(np.clip(signal * max_pair_w, -max_pair_w, max_pair_w))
         beta_t = betas_t.get(key, pair.init_beta)
         weights[pair.y] = weights.get(pair.y, 0.0) + w_pair
         weights[pair.x] = weights.get(pair.x, 0.0) - w_pair * beta_t

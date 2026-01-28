@@ -206,6 +206,6 @@ sector_map:
   path: data/raw/sector_map.csv
 prices:
   source: yfinance
-  start: '2018-01-01'
+  start: '2023-01-01'
   end: '2026-01-28'
   max_missing_pct: 0.2
