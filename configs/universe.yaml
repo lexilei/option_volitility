@@ -207,5 +207,5 @@ sector_map:
 prices:
   source: yfinance
   start: '2018-01-01'
-  end: '2024-12-31'
+  end: '2026-01-28'
   max_missing_pct: 0.2
