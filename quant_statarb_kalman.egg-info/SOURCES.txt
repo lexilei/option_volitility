@@ -14,6 +14,7 @@ statarb/__init__.py
 statarb/backtest.py
 statarb/cli.py
 statarb/costs.py
+statarb/dashboard.py
 statarb/data.py
 statarb/kalman.py
 statarb/metrics.py
