@@ -109,7 +109,8 @@ class TestParquetStorage:
 
         assert metadata is not None
         assert metadata["num_rows"] == 100
-        assert metadata["num_columns"] == 5
+        # Parquet includes index as a column, so 5 data cols + 1 index = 6
+        assert metadata["num_columns"] == 6
 
     def test_load_nonexistent(self, storage):
         """Test loading nonexistent file returns None."""
