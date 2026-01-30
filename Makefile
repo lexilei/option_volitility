@@ -15,9 +15,12 @@ help:
 	@echo "  make type-check   - Run type checker (mypy)"
 	@echo ""
 	@echo "Data & Training:"
-	@echo "  make data         - Fetch sample data"
+	@echo "  make data         - Fetch sample data with IV"
 	@echo "  make train        - Train all models"
 	@echo "  make train-quick  - Train baseline models only"
+	@echo ""
+	@echo "Backtest:"
+	@echo "  make backtest     - Run backtest with baseline model"
 	@echo ""
 	@echo "Dashboard:"
 	@echo "  make dashboard    - Run Streamlit dashboard"
@@ -26,51 +29,59 @@ help:
 	@echo "  make clean        - Remove cache and build files"
 	@echo "  make clean-data   - Remove all data files"
 
-# Installation
+# Installation (using conda)
 install:
-	uv sync
+	conda install -c conda-forge pandas numpy scipy scikit-learn xgboost lightgbm -y
+	pip install streamlit plotly optuna massive python-dotenv loguru pydantic pydantic-settings pyarrow requests joblib pytest pytest-cov
 
 install-dev:
-	uv sync --all-extras
+	pip install ruff mypy
 
 # Testing
 test:
-	uv run pytest tests/ -v --cov=src --cov-report=term-missing
+	python -m pytest tests/ -v --cov=src --cov-report=term-missing
 
 test-quick:
-	uv run pytest tests/ -v -x --tb=short
+	python -m pytest tests/ -v -x --tb=short
 
 # Linting and formatting
 lint:
-	uv run ruff check src/ tests/ scripts/
+	ruff check src/ tests/ scripts/
 
 format:
-	uv run ruff format src/ tests/ scripts/
-	uv run ruff check --fix src/ tests/ scripts/
+	ruff format src/ tests/ scripts/
+	ruff check --fix src/ tests/ scripts/
 
 type-check:
-	uv run mypy src/
+	mypy src/
 
 # Data operations
 data:
-	uv run python scripts/fetch_data.py --symbol SPY --days 365 --fetch-vix
+	python scripts/fetch_data.py --symbol SPY --days 365 --fetch-iv
 
 data-full:
-	uv run python scripts/fetch_data.py --symbol SPY --days 730 --fetch-vix --fetch-options
+	python scripts/fetch_data.py --symbol SPY --days 730 --fetch-iv --fetch-options
 
 # Training
 train:
-	uv run python scripts/train_models.py --model all
+	python scripts/train_models.py --model all
 
 train-quick:
-	uv run python scripts/train_models.py --model baseline
+	python scripts/train_models.py --model baseline
 
 train-tune:
-	uv run python scripts/train_models.py --model all --tune --n-trials 50
+	python scripts/train_models.py --model all --tune --n-trials 50
+
+# Backtest
+backtest:
+	python scripts/run_backtest.py --symbol SPY --model baseline --vrp-threshold 0.02
+
+backtest-xgb:
+	python scripts/run_backtest.py --symbol SPY --model xgboost --vrp-threshold 0.02
 
 # Dashboard
 dashboard:
-	uv run streamlit run dashboard/app.py
+	streamlit run dashboard/app.py
 
 # Cleanup
 clean:

@@ -65,6 +65,12 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
+        "--fetch-iv",
+        action="store_true",
+        help="Fetch current ATM IV from options chain (requires Options plan)",
+    )
+
+    parser.add_argument(
         "--no-cache",
         action="store_true",
         help="Bypass cache and fetch fresh data",
@@ -172,6 +178,45 @@ def main() -> int:
                 logger.warning(f"No options data returned for {args.symbol}")
             else:
                 logger.info(f"Fetched {len(options_df)} options contracts")
+
+        # Fetch IV from options chain if requested
+        if args.fetch_iv:
+            logger.info("Fetching ATM IV from options chain...")
+            try:
+                from src.data.massive_client import MassiveClient
+                from src.data.storage import ParquetStorage
+                import pandas as pd
+
+                massive_client = MassiveClient(api_key)
+
+                # Get current ATM IV
+                iv = massive_client.get_atm_iv(args.symbol, days_to_expiry=30)
+
+                if iv is not None:
+                    logger.info(f"Current ATM IV: {iv:.4f} ({iv*100:.2f}%)")
+
+                    # Save IV data point
+                    storage = ParquetStorage(args.data_dir)
+                    iv_data = pd.DataFrame({
+                        "date": [pd.Timestamp.today().date()],
+                        "atm_iv": [iv],
+                        "symbol": [args.symbol],
+                    }).set_index("date")
+
+                    # Append to existing IV history
+                    key = f"iv/{args.symbol}"
+                    if storage.exists(key):
+                        storage.append(iv_data, key, dedupe_column="symbol")
+                    else:
+                        storage.save(iv_data, key)
+
+                    logger.info(f"Saved IV data to {key}")
+                else:
+                    logger.warning("Could not calculate ATM IV")
+            except ImportError:
+                logger.error("massive library not installed. Run: pip install massive")
+            except Exception as e:
+                logger.error(f"Error fetching IV: {e}")
 
         logger.info("Data fetch complete!")
         return 0

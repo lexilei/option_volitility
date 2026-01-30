@@ -146,10 +146,31 @@ def main() -> int:
 
     features = pipeline.transform(price_df)
 
-    # Calculate IV (simulated for demo)
+    # Calculate RV
     rv_21d = vol_calc.realized_volatility(price_df["close"], window=21)
-    iv = rv_21d + np.random.normal(0.02, 0.01, len(rv_21d))
-    iv = pd.Series(np.clip(iv, 0.05, 0.8), index=price_df.index)
+
+    # Try to load real IV data, otherwise simulate
+    try:
+        from src.data.storage import ParquetStorage
+        storage = ParquetStorage(args.data_dir)
+        iv_df = storage.load(f"iv/{args.symbol}")
+
+        if iv_df is not None and not iv_df.empty:
+            # Use the most recent IV value as constant (for now)
+            current_iv = iv_df["atm_iv"].iloc[-1]
+            logger.info(f"Using real ATM IV: {current_iv:.4f} ({current_iv*100:.2f}%)")
+            # Create IV series with some variation around the current level
+            iv = pd.Series(
+                current_iv + np.random.normal(0, 0.005, len(rv_21d)),
+                index=price_df.index
+            )
+            iv = iv.clip(0.05, 0.8)
+        else:
+            raise FileNotFoundError("No IV data")
+    except Exception as e:
+        logger.warning(f"No IV data found, using simulated IV: {e}")
+        iv = rv_21d + np.random.normal(0.02, 0.01, len(rv_21d))
+        iv = pd.Series(np.clip(iv, 0.05, 0.8), index=price_df.index)
 
     # Load or create model
     if args.model_path and Path(args.model_path).exists():
@@ -162,7 +183,20 @@ def main() -> int:
 
         # Prepare training data
         features["rv_cc_21d"] = rv_21d
-        X, y = pipeline.prepare_training_data(features, target_col="rv_cc_21d")
+
+        # Drop columns with too many NaN (require long history)
+        nan_threshold = len(features) * 0.5  # Drop if >50% NaN
+        cols_to_drop = features.columns[features.isna().sum() > nan_threshold].tolist()
+        if cols_to_drop:
+            logger.info(f"Dropping {len(cols_to_drop)} features with >50% NaN")
+            features = features.drop(columns=cols_to_drop)
+
+        # Forward fill remaining NaN
+        features = features.ffill().bfill()
+
+        X, y = pipeline.prepare_training_data(
+            features, target_col="rv_cc_21d", forecast_horizon=0, dropna=True
+        )
 
         # Train model
         if args.model == "xgboost":

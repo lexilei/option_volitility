@@ -272,7 +272,7 @@ class VolatilityStrategy:
             freq="D",
         )
 
-        equity = pd.Series(initial_capital, index=all_dates)
+        equity = pd.Series(float(initial_capital), index=all_dates, dtype=float)
 
         for _, trade in trades_df.iterrows():
             exit_date = pd.Timestamp(trade["exit_date"])
