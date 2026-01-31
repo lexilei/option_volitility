@@ -225,9 +225,12 @@ def main():
                         })
 
             corr_df = pd.DataFrame(corr_pairs)
-            corr_df["Abs Correlation"] = corr_df["Correlation"].abs()
-            corr_df = corr_df.sort_values("Abs Correlation", ascending=False)
-            st.dataframe(corr_df.head(10).round(4), use_container_width=True)
+            if not corr_df.empty and "Correlation" in corr_df.columns:
+                corr_df["Abs Correlation"] = corr_df["Correlation"].abs()
+                corr_df = corr_df.sort_values("Abs Correlation", ascending=False)
+                st.dataframe(corr_df.head(10).round(4), use_container_width=True)
+            else:
+                st.info("Select at least 2 features to see correlations")
 
     with tab3:
         st.subheader("Feature Distributions")

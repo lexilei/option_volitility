@@ -10,30 +10,32 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Custom CSS
+# Custom CSS - works with both light and dark themes
 st.markdown("""
     <style>
     .main-header {
         font-size: 2.5rem;
         font-weight: bold;
-        color: #1f77b4;
+        color: #FF6B6B;
         margin-bottom: 1rem;
     }
     .sub-header {
         font-size: 1.2rem;
-        color: #666;
+        color: #888;
         margin-bottom: 2rem;
     }
-    .metric-card {
-        background-color: #f0f2f6;
-        border-radius: 10px;
-        padding: 1rem;
-        margin: 0.5rem 0;
-    }
-    .stMetric {
-        background-color: #f8f9fa;
+    /* Metric styling that works with dark theme */
+    [data-testid="stMetric"] {
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         padding: 1rem;
         border-radius: 8px;
+    }
+    [data-testid="stMetricLabel"] {
+        color: #888 !important;
+    }
+    [data-testid="stMetricValue"] {
+        color: #FAFAFA !important;
     }
     </style>
 """, unsafe_allow_html=True)
