@@ -1,184 +1,170 @@
-# Option Volatility Strategy with ML Enhancement
+# 📈 Option Volatility Strategy with ML Enhancement
 
-A comprehensive framework for volatility selling strategies enhanced with machine learning models. This project combines traditional quantitative finance approaches with modern ML techniques to predict volatility and generate alpha.
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://lexilei-option-volitility.streamlit.app)
+[![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Overview
+A comprehensive framework for **volatility selling strategies** enhanced with machine learning. This project combines traditional quantitative finance with modern ML techniques to predict volatility and capture the **Volatility Risk Premium (VRP)**.
 
-This project implements a complete pipeline for:
-- **Data Collection**: Fetching options and underlying data from Polygon.io
-- **Feature Engineering**: Computing volatility metrics (RV, IV, VRP) and technical indicators
-- **ML Models**: From simple baselines to advanced deep learning (LSTM, Temporal Fusion Transformer)
-- **Backtesting**: Robust walk-forward validation and strategy simulation
-- **Visualization**: Interactive Streamlit dashboard for analysis
+## 🎯 Live Demo
 
-## Quick Start
+**[👉 View Live Dashboard](https://lexilei-option-volitility.streamlit.app)**
+
+## ✨ Features
+
+| Feature | Description |
+|---------|-------------|
+| 📊 **Real-time Data** | Integration with Massive (Polygon.io) API for price and options data |
+| 🔬 **90+ Features** | Volatility metrics, technical indicators, macro factors |
+| 🤖 **7 ML Models** | From Historical Mean to Temporal Fusion Transformer |
+| 📈 **Backtesting** | Walk-forward validation with comprehensive metrics |
+| 💰 **Paper Trading** | Live simulation with automated daily updates |
+| 🎨 **Dashboard** | Interactive Streamlit interface for analysis |
+
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- Python 3.10+
-- [uv](https://github.com/astral-sh/uv) package manager
+- Python 3.11+
+- Conda (recommended) or pip
+- [Massive API Key](https://massive.com) (formerly Polygon.io)
 
 ### Installation
 
 ```bash
 # Clone the repository
-git clone <your-repo-url>
-cd option_volatility
+git clone https://github.com/lexilei/option_volitility.git
+cd option_volitility
 
-# Install dependencies with uv
-uv sync
+# Create conda environment
+conda create -n options-env python=3.11 -y
+conda activate options-env
 
-# Copy environment template and add your API keys
+# Install dependencies
+pip install -r requirements.txt
+
+# Copy environment template and add your API key
 cp .env.example .env
-# Edit .env with your Polygon.io API key
+# Edit .env with your API key
 ```
 
 ### Usage
 
-#### 1. Fetch Data
-
 ```bash
-# Fetch historical data for SPY
-uv run python scripts/fetch_data.py --symbol SPY --days 365
+# Fetch data with IV
+python scripts/fetch_data.py --symbol SPY --days 365 --fetch-iv
+
+# Run backtest
+python scripts/run_backtest.py --symbol SPY --model baseline
+
+# Start paper trading
+python scripts/paper_trade.py --symbol SPY
+
+# Launch dashboard
+streamlit run dashboard/app.py
 ```
 
-#### 2. Train Models
+## 📊 Strategy Overview
 
-```bash
-# Train all models
-uv run python scripts/train_models.py --model all
-
-# Or train specific model
-uv run python scripts/train_models.py --model xgboost
-```
-
-#### 3. Launch Dashboard
-
-```bash
-uv run streamlit run dashboard/app.py
-```
-
-## Project Structure
-
-```
-option_volatility/
-├── src/                    # Source code
-│   ├── data/              # Data fetching and storage
-│   ├── features/          # Feature engineering
-│   ├── models/            # ML models
-│   ├── training/          # Training pipeline
-│   ├── backtest/          # Backtesting framework
-│   └── utils/             # Utilities
-├── dashboard/             # Streamlit dashboard
-├── notebooks/             # Jupyter notebooks
-├── data/                  # Data storage (gitignored)
-├── tests/                 # Unit tests
-└── scripts/               # CLI scripts
-```
-
-## Models
-
-| Model | Description | Use Case |
-|-------|-------------|----------|
-| Historical Mean | Rolling average of past volatility | Baseline |
-| Ridge/Lasso | Linear regression with regularization | Interpretable predictions |
-| XGBoost | Gradient boosted trees | Strong performance on tabular data |
-| LightGBM | Fast gradient boosting | Large datasets |
-| LSTM | Long Short-Term Memory network | Capturing temporal patterns |
-| TFT | Temporal Fusion Transformer | State-of-the-art time series |
-| Ensemble | Weighted combination of models | Robust predictions |
-
-## Features
-
-### Volatility Metrics
-- **Realized Volatility (RV)**: Historical price volatility
-- **Implied Volatility (IV)**: Market-implied volatility from options
-- **Volatility Risk Premium (VRP)**: IV - RV spread
-
-### Technical Indicators
-- RSI, ATR, Bollinger Bands
-- Moving averages (SMA, EMA)
-- Volume metrics
-
-### Macro Features
-- VIX levels and term structure
-- Interest rate spreads
-- Market regime indicators
-
-## Dashboard Pages
-
-1. **Data Explorer**: Visualize raw data and basic statistics
-2. **Feature Analysis**: Analyze feature distributions and correlations
-3. **Model Comparison**: Compare model performance metrics
-4. **Backtest Results**: View strategy performance and risk metrics
-5. **Settings**: Configure parameters and API keys
-
-## Configuration
-
-### Environment Variables
-
-Create a `.env` file with:
-
-```env
-POLYGON_API_KEY=your_api_key_here
-LOG_LEVEL=INFO
-DATA_DIR=data
-```
-
-### Model Configuration
-
-Models can be configured via `src/utils/config.py` or the dashboard settings page.
-
-## Development
-
-### Running Tests
-
-```bash
-uv run pytest
-```
-
-### Code Quality
-
-```bash
-# Linting
-uv run ruff check .
-
-# Type checking
-uv run mypy src/
-```
-
-## Key Concepts
-
-### Walk-Forward Validation
-
-To avoid look-ahead bias, we use walk-forward cross-validation:
-- Training window: 2 years rolling
-- Test window: 3 months
-- Re-train models at each step
-
-### Volatility Risk Premium (VRP)
-
-The core strategy exploits the tendency of implied volatility to exceed realized volatility:
+The strategy exploits the **Volatility Risk Premium (VRP)** - the tendency for implied volatility to exceed realized volatility:
 
 ```
 VRP = IV - RV
 ```
 
-When VRP is high, selling volatility (e.g., selling options) tends to be profitable.
+When VRP > threshold → **Sell Volatility** (profit if IV overestimates RV)
+When VRP < -threshold → **Buy Volatility** (profit if IV underestimates RV)
 
-## Performance Metrics
+### Signal Flow
 
-- **Sharpe Ratio**: Risk-adjusted returns
-- **Max Drawdown**: Largest peak-to-trough decline
-- **Win Rate**: Percentage of profitable trades
-- **Calmar Ratio**: Annual return / Max drawdown
+```
+Market Data → Feature Engineering → ML Prediction → VRP Calculation → Trading Signal
+```
 
-## License
+## 🤖 ML Models
 
-MIT License - see LICENSE file for details.
+| Model | Description | Use Case |
+|-------|-------------|----------|
+| Historical Mean | Rolling average baseline | Benchmark |
+| Ridge/Lasso | Linear models with regularization | Fast, interpretable |
+| XGBoost | Gradient boosting | High accuracy |
+| LightGBM | Fast gradient boosting | Large datasets |
+| LSTM | Recurrent neural network | Sequential patterns |
+| TFT | Temporal Fusion Transformer | State-of-the-art |
+| Ensemble | Combined predictions | Robust performance |
 
-## Acknowledgments
+## 📈 Backtesting Results
 
-- [Polygon.io](https://polygon.io/) for market data
-- [Streamlit](https://streamlit.io/) for the dashboard framework
-- The quantitative finance community for research and inspiration
+Example results using SPY data:
+
+| Metric | Value |
+|--------|-------|
+| Total Return | 23.29% |
+| Sharpe Ratio | 1.00 |
+| Max Drawdown | 14.24% |
+| Win Rate | 90.91% |
+| Profit Factor | 2.58 |
+
+## 💰 Paper Trading
+
+Automated daily paper trading with GitHub Actions:
+
+- Runs at 5 PM ET on weekdays (after market close)
+- Fetches latest market data and IV
+- Generates signals and executes paper trades
+- Updates portfolio and performance metrics
+- Commits results to repository
+
+```bash
+# Check paper trading status
+python scripts/paper_trade.py --summary
+
+# Reset paper trading
+python scripts/paper_trade.py --reset
+```
+
+## 📁 Project Structure
+
+```
+option_volitility/
+├── src/
+│   ├── data/          # Data fetching and storage
+│   ├── features/      # Feature engineering
+│   ├── models/        # ML models
+│   ├── training/      # Training pipeline
+│   ├── backtest/      # Backtesting framework
+│   └── trading/       # Paper trading system
+├── dashboard/         # Streamlit dashboard
+├── scripts/           # CLI scripts
+├── tests/             # Unit tests
+└── data/              # Data storage
+```
+
+## 🛠️ Development
+
+```bash
+# Run tests
+make test
+
+# Format code
+make format
+
+# Type check
+make type-check
+```
+
+## 📝 License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+## 🙏 Acknowledgments
+
+- [Massive](https://massive.com) (formerly Polygon.io) for market data API
+- [Streamlit](https://streamlit.io) for the dashboard framework
+- [scikit-learn](https://scikit-learn.org), [XGBoost](https://xgboost.ai), [PyTorch](https://pytorch.org) for ML
+
+---
+
+<p align="center">
+  Made with ❤️ by <a href="https://github.com/lexilei">lexilei</a>
+</p>

@@ -186,8 +186,10 @@ class PaperTrader:
 
     def get_equity(self, current_iv: float, current_rv: float) -> float:
         """Calculate total equity including unrealized P&L."""
+        # Equity = cash + notional value of open positions + unrealized P&L
+        open_notional = sum(pos.notional_value for pos in self.get_open_positions())
         unrealized = self._calculate_unrealized_pnl(current_iv, current_rv)
-        return self.cash + unrealized
+        return self.cash + open_notional + unrealized
 
     def _calculate_unrealized_pnl(self, current_iv: float, current_rv: float) -> float:
         """Calculate unrealized P&L for open positions."""
