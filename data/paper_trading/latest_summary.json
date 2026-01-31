@@ -1,0 +1,13 @@
+{
+  "date": "2026-01-30",
+  "iv": 0.1982195172518839,
+  "rv": 0.10383232092743269,
+  "vrp": 0.0943871963244512,
+  "equity": 90000.0,
+  "cash": 90000,
+  "open_positions": 1,
+  "new_positions": 1,
+  "closed_trades": 0,
+  "daily_return": 0.0,
+  "cumulative_return": -0.1
+}

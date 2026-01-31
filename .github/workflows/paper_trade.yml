@@ -1,0 +1,47 @@
+name: Daily Paper Trading
+
+on:
+  schedule:
+    # Run at 5 PM ET (22:00 UTC) every weekday (after market close)
+    - cron: '0 22 * * 1-5'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  paper-trade:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run paper trading
+        env:
+          POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
+        run: |
+          python scripts/paper_trade.py --symbol SPY --vrp-threshold 0.02
+
+      - name: Commit trading results
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add data/paper_trading/
+          git diff --staged --quiet || git commit -m "📈 Daily paper trading update $(date +'%Y-%m-%d')"
+          git push

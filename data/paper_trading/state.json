@@ -1,0 +1,25 @@
+{
+  "cash": 90000,
+  "next_position_id": 2,
+  "next_trade_id": 1,
+  "positions": [
+    {
+      "position_id": 1,
+      "entry_date": "2026-01-30",
+      "position_type": "SELL_VOL",
+      "entry_iv": 0.1982195172518839,
+      "entry_rv": 0.10383232092743269,
+      "entry_vrp": 0.0943871963244512,
+      "target_exit_date": "2026-02-20",
+      "underlying_price": 694.04,
+      "notional_value": 10000,
+      "status": "OPEN",
+      "exit_date": null,
+      "exit_iv": null,
+      "exit_rv": null,
+      "pnl": null,
+      "pnl_pct": null
+    }
+  ],
+  "last_updated": "2026-01-30T19:31:25.078781"
+}
