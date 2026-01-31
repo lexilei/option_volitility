@@ -220,3 +220,6 @@ checkpoints/
 # Secrets
 .env
 secrets/
+.streamlit/secrets.toml
+
+papers/
