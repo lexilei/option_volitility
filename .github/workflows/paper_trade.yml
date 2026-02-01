@@ -23,25 +23,33 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          key: ${{ runner.os }}-pip-paper-trade-v1
           restore-keys: |
             ${{ runner.os }}-pip-
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          # Install only packages needed for paper trading
+          pip install pandas numpy scipy scikit-learn pyarrow requests \
+                      python-dotenv loguru pydantic pydantic-settings \
+                      joblib massive
 
       - name: Run paper trading
         env:
           POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
         run: |
           python scripts/paper_trade.py --symbol SPY --vrp-threshold 0.02
+        continue-on-error: false
 
       - name: Commit trading results
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add data/paper_trading/
-          git diff --staged --quiet || git commit -m "📈 Daily paper trading update $(date +'%Y-%m-%d')"
-          git push
+          git add data/paper_trading/ || true
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "📈 Daily paper trading update $(date +'%Y-%m-%d')"
+            git push
+          fi

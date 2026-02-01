@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 import pandas as pd
 from loguru import logger
 
-from .polygon_client import PolygonClient
+from .massive_client import MassiveClient
 from .storage import ParquetStorage
 
 if TYPE_CHECKING:
@@ -16,7 +16,10 @@ if TYPE_CHECKING:
 
 
 class DataFetcher:
-    """Unified interface for fetching and caching market data."""
+    """Unified interface for fetching and caching market data.
+
+    Uses MassiveClient (formerly Polygon.io) for data fetching.
+    """
 
     def __init__(
         self,
@@ -27,11 +30,11 @@ class DataFetcher:
         """Initialize the data fetcher.
 
         Args:
-            api_key: Polygon.io API key
+            api_key: Massive (Polygon.io) API key
             data_dir: Directory for data storage
             cache_enabled: Whether to cache data locally
         """
-        self.client = PolygonClient(api_key)
+        self.client = MassiveClient(api_key)
         self.storage = ParquetStorage(data_dir)
         self.cache_enabled = cache_enabled
 
@@ -104,36 +107,34 @@ class DataFetcher:
         mask = (df.index >= start_date) & (df.index <= end_date)
         return df[mask]
 
-    def get_options_chain(
+    def get_options_chain_iv(
         self,
         symbol: str,
-        expiration_date: date | None = None,
+        expiration_date: str | None = None,
         use_cache: bool = True,
     ) -> pd.DataFrame:
-        """Get options chain for a symbol.
+        """Get options chain with IV data.
 
         Args:
             symbol: Underlying stock ticker
-            expiration_date: Filter by expiration date
+            expiration_date: Filter by expiration date (YYYY-MM-DD)
             use_cache: Whether to use cached data
 
         Returns:
-            DataFrame with options contracts
+            DataFrame with options including IV and Greeks
         """
-        cache_key = f"options_chain/{symbol}"
-        if expiration_date:
-            cache_key += f"/{expiration_date.strftime('%Y%m%d')}"
+        cache_key = f"options_iv/{symbol}/{date.today().strftime('%Y%m%d')}"
 
-        # Try cache
+        # Try cache (only use same-day cache for IV data)
         if use_cache and self.cache_enabled:
             cached_df = self.storage.load(cache_key)
             if cached_df is not None:
-                logger.info(f"Using cached options chain for {symbol}")
+                logger.info(f"Using cached options IV for {symbol}")
                 return cached_df
 
         # Fetch from API
-        logger.info(f"Fetching options chain for {symbol} from API")
-        df = self.client.get_options_chain(symbol, expiration_date=expiration_date)
+        logger.info(f"Fetching options chain with IV for {symbol}")
+        df = self.client.get_options_chain_iv(symbol, expiration_date=expiration_date)
 
         if df.empty:
             return df
@@ -144,38 +145,17 @@ class DataFetcher:
 
         return df
 
-    def get_options_snapshot(
-        self,
-        symbol: str,
-        use_cache: bool = False,
-    ) -> pd.DataFrame:
-        """Get current options snapshot for a symbol.
+    def get_atm_iv(self, symbol: str, days_to_expiry: int = 30) -> float | None:
+        """Get ATM implied volatility for a symbol.
 
         Args:
             symbol: Underlying stock ticker
-            use_cache: Whether to use cached data (default False for real-time data)
+            days_to_expiry: Target days to expiration
 
         Returns:
-            DataFrame with options snapshot
+            ATM IV as decimal (e.g., 0.20 for 20%)
         """
-        cache_key = f"options_snapshot/{symbol}/{date.today().strftime('%Y%m%d')}"
-
-        if use_cache and self.cache_enabled:
-            cached_df = self.storage.load(cache_key)
-            if cached_df is not None:
-                logger.info(f"Using cached options snapshot for {symbol}")
-                return cached_df
-
-        logger.info(f"Fetching options snapshot for {symbol} from API")
-        df = self.client.get_option_snapshot(symbol)
-
-        if df.empty:
-            return df
-
-        if self.cache_enabled:
-            self.storage.save(df, cache_key)
-
-        return df
+        return self.client.get_atm_iv(symbol, days_to_expiry)
 
     def get_vix_history(
         self,
@@ -193,8 +173,17 @@ class DataFetcher:
         Returns:
             DataFrame with VIX data
         """
-        # VIX is available as a ticker on Polygon
-        return self.get_price_history("VIX", start_date, end_date, use_cache)
+        # VIX may not be available directly, try I:VIX or VIX
+        for ticker in ["I:VIX", "VIX", "VIXY"]:
+            try:
+                df = self.get_price_history(ticker, start_date, end_date, use_cache)
+                if not df.empty:
+                    return df
+            except Exception:
+                continue
+
+        logger.warning("VIX data not available")
+        return pd.DataFrame()
 
     def get_multiple_symbols(
         self,
@@ -230,14 +219,12 @@ class DataFetcher:
 
         Args:
             symbol: Stock ticker symbol
-            data_type: Type of data to refresh (prices, options_chain, options_snapshot)
+            data_type: Type of data to refresh (prices, options_iv)
         """
         cache_key = f"{data_type}/{symbol}"
         self.storage.delete(cache_key)
 
         if data_type == "prices":
             self.get_price_history(symbol, use_cache=False)
-        elif data_type == "options_chain":
-            self.get_options_chain(symbol, use_cache=False)
-        elif data_type == "options_snapshot":
-            self.get_options_snapshot(symbol, use_cache=False)
+        elif data_type == "options_iv":
+            self.get_options_chain_iv(symbol, use_cache=False)
