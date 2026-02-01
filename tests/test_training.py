@@ -11,6 +11,14 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.training.walk_forward import WalkForwardCV, ExpandingWindowCV
 
+# Check if optuna is available
+try:
+    import optuna
+
+    HAS_OPTUNA = True
+except ImportError:
+    HAS_OPTUNA = False
+
 
 class TestWalkForwardCV:
     """Tests for WalkForwardCV class."""
@@ -171,6 +179,7 @@ class TestExpandingWindowCV:
         assert folds[0].train_indices[0] == 0
 
 
+@pytest.mark.skipif(not HAS_OPTUNA, reason="Optuna not installed")
 class TestHyperoptTuner:
     """Tests for HyperoptTuner class."""
 
@@ -190,9 +199,10 @@ class TestHyperoptTuner:
 
     def test_import(self):
         """Test that HyperoptTuner can be imported."""
-        from src.training.hyperopt import HyperoptTuner
+        from src.training.hyperopt import HyperoptTuner, HAS_OPTUNA
 
         assert HyperoptTuner is not None
+        assert HAS_OPTUNA is True  # Should be True if we get here (class is skipped otherwise)
 
     def test_initialization(self):
         """Test tuner initialization."""

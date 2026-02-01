@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     )
 
     # API
-    polygon_api_key: str = Field(default="", description="Polygon.io API key")
+    massive_api_key: str = Field(default="", description="Massive API key (formerly Polygon.io)")
 
     # Logging
     log_level: str = Field(default="INFO", description="Logging level")

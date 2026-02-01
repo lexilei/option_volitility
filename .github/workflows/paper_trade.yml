@@ -37,7 +37,7 @@ jobs:
 
       - name: Run paper trading
         env:
-          POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
+          MASSIVE_API_KEY: ${{ secrets.MASSIVE_API_KEY }}
         run: |
           python scripts/paper_trade.py --symbol SPY --vrp-threshold 0.02
         continue-on-error: false

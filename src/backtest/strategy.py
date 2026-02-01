@@ -143,6 +143,10 @@ class VolatilityStrategy:
                 "vrp": vrp_val,
             })
 
+        if not signals_data:
+            logger.info("Generated 0 signals: empty input data")
+            return pd.DataFrame(columns=["signal", "signal_name", "strength", "iv", "predicted_rv", "vrp"])
+
         df = pd.DataFrame(signals_data).set_index("date")
         logger.info(
             f"Generated {len(df)} signals: "

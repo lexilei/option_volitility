@@ -21,12 +21,12 @@ def main():
     with tab1:
         st.subheader("API Configuration")
 
-        st.markdown("### Polygon.io API")
+        st.markdown("### Massive API (formerly Polygon.io)")
 
         api_key = st.text_input(
             "API Key",
             type="password",
-            help="Your Polygon.io API key for fetching market data",
+            help="Your Massive API key for fetching market data",
         )
 
         if api_key:

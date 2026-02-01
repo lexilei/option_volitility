@@ -225,10 +225,10 @@ def main() -> int:
 
     # Get API key
     settings = get_settings()
-    api_key = settings.polygon_api_key
+    api_key = settings.massive_api_key
 
     if not api_key:
-        logger.error("No API key found. Set POLYGON_API_KEY environment variable.")
+        logger.error("No API key found. Set MASSIVE_API_KEY environment variable.")
         return 1
 
     # Initialize paper trader

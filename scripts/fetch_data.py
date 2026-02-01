@@ -87,7 +87,7 @@ def parse_args() -> argparse.Namespace:
         "--api-key",
         type=str,
         default=None,
-        help="Polygon.io API key (or set POLYGON_API_KEY env var)",
+        help="Massive API key (or set MASSIVE_API_KEY env var)",
     )
 
     parser.add_argument(
@@ -108,11 +108,11 @@ def main() -> int:
 
     # Get API key
     settings = get_settings()
-    api_key = args.api_key or settings.polygon_api_key
+    api_key = args.api_key or settings.massive_api_key
 
     if not api_key:
         logger.error(
-            "No API key provided. Set POLYGON_API_KEY environment variable "
+            "No API key provided. Set MASSIVE_API_KEY environment variable "
             "or use --api-key argument."
         )
         return 1

@@ -88,7 +88,7 @@ def main():
         )
 
         if data_source == "Fetch from API":
-            api_key = st.text_input("Polygon API Key", type="password")
+            api_key = st.text_input("Massive API Key", type="password")
             fetch_button = st.button("Fetch Data")
         else:
             fetch_button = False
@@ -193,7 +193,7 @@ def main():
 
     with tab3:
         st.subheader("Options Chain")
-        st.info("Options chain data will be displayed when fetched from Polygon.io API.")
+        st.info("Options chain data will be displayed when fetched from Massive API.")
 
         # Sample options chain display
         st.markdown("### Sample Options Chain Structure")

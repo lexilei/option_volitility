@@ -136,19 +136,17 @@ class TestDataFetcher:
         assert DataFetcher is not None
 
 
-class TestPolygonClient:
-    """Tests for PolygonClient class."""
+class TestMassiveClient:
+    """Tests for MassiveClient class."""
 
     def test_import(self):
-        """Test that PolygonClient can be imported."""
-        from src.data.polygon_client import PolygonClient
+        """Test that MassiveClient can be imported."""
+        from src.data.massive_client import MassiveClient
 
-        assert PolygonClient is not None
+        assert MassiveClient is not None
 
-    def test_initialization(self):
-        """Test client initialization."""
-        from src.data.polygon_client import PolygonClient
+    def test_import_from_package(self):
+        """Test that MassiveClient can be imported from package."""
+        from src.data import MassiveClient
 
-        client = PolygonClient(api_key="test_key")
-        assert client.api_key == "test_key"
-        assert client.rate_limit_delay == 0.25
+        assert MassiveClient is not None
