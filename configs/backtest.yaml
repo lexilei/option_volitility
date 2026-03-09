@@ -21,5 +21,5 @@ portfolio:
   w_max: 0.10
   gross_max: 2.0
 costs:
-  slippage_bps: 2.0
+  slippage_bps: 1.0
   commission_per_share: 0.0
