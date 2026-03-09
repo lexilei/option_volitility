@@ -18,7 +18,7 @@ signals:
   stop_z: 3.0
 portfolio:
   max_pair_w: 0.20
-  w_max: 0.03
+  w_max: 0.02
   gross_max: 2.0
 costs:
   slippage_bps: 1.0
