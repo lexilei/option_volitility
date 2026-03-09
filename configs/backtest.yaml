@@ -7,7 +7,7 @@ corr_threshold: 0.7
 max_pairs: 20
 pval_thresh: 0.03
 rank_by: "pvalue"
-half_life_min: 1
+half_life_min: 3
 half_life_max: 60
 kalman:
   R: 1e-3
