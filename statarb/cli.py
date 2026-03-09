@@ -135,6 +135,7 @@ def _cmd_backtest(config_path: str, prices_path: str) -> None:
         w_max=cfg.get("portfolio", {}).get("w_max", 0.02),
         gross_max=cfg.get("portfolio", {}).get("gross_max", 1.0),
         slippage_bps=_as_float(cfg.get("costs", {}).get("slippage_bps"), 2.0),
+        proportional=cfg.get("signals", {}).get("proportional", False),
     )
 
     returns = equity.pct_change().dropna()

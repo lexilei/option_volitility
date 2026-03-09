@@ -50,6 +50,7 @@ def walk_forward_backtest(
     w_max: float = 0.02,
     gross_max: float = 1.0,
     slippage_bps: float = 2.0,
+    proportional: bool = False,
 ) -> Tuple[pd.Series, pd.DataFrame, pd.DataFrame]:
     """Return equity curve, pair positions, and daily weights."""
     # Drop columns with >20% missing before dropping rows
@@ -103,7 +104,7 @@ def walk_forward_backtest(
             _, beta_s, spread = kalman_regression(y, x, R=kalman_R, Q=kalman_Q)
             lookback = max(10, pair.half_life * 2)
             z = compute_zscore(spread, lookback=lookback)
-            pos = generate_pair_positions(z, entry=entry_z, exit=exit_z, stop=stop_z)
+            pos = generate_pair_positions(z, entry=entry_z, exit=exit_z, stop=stop_z, proportional=proportional)
             pos = pos.reindex(window_prices.index).fillna(0.0)
 
             key = f"{pair.y}-{pair.x}"
