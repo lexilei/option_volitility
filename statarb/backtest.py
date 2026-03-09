@@ -127,7 +127,6 @@ def walk_forward_backtest(
             if date not in step_weights.index:
                 continue
             w = step_weights.loc[date].fillna(0.0)
-            w = neutralize_by_sector(w, sector_map)
             w = neutralize_beta(w, step_betas, target_beta=0.0)
             w = apply_limits(w, w_max=w_max, gross_max=gross_max)
             step_weights.loc[date, w.index] = w

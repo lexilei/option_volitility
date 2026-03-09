@@ -17,9 +17,9 @@ signals:
   exit_z: 0.5
   stop_z: 3.0
 portfolio:
-  max_pair_w: 0.15
-  w_max: 0.08
-  gross_max: 1.0
+  max_pair_w: 0.20
+  w_max: 0.10
+  gross_max: 2.0
 costs:
   slippage_bps: 2.0
   commission_per_share: 0.0
