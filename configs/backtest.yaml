@@ -20,9 +20,10 @@ signals:
   proportional: true
 portfolio:
   max_pair_w: 0.20
-  w_max: 0.02
-  gross_max: 1.0
+  w_max: 0.03
+  gross_max: 1.5
   weight_smooth: 4
+  vol_target: 0.20
 costs:
   slippage_bps: 1.0
   commission_per_share: 0.0
