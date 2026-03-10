@@ -137,6 +137,7 @@ def _cmd_backtest(config_path: str, prices_path: str) -> None:
         slippage_bps=_as_float(cfg.get("costs", {}).get("slippage_bps"), 2.0),
         proportional=cfg.get("signals", {}).get("proportional", False),
         weight_smooth=cfg.get("portfolio", {}).get("weight_smooth", 0.0),
+        vol_target=cfg.get("portfolio", {}).get("vol_target", 0.0),
     )
 
     returns = equity.pct_change().dropna()
@@ -191,7 +192,7 @@ def _cmd_generate_weights(config_path: str, prices_path: str) -> None:
     for pair in pairs:
         y = prices[pair.y]
         x = prices[pair.x]
-        _, beta_s, spread = kalman_regression(
+        _, beta_s, spread, _ = kalman_regression(
             y,
             x,
             R=_as_float(cfg.get("kalman", {}).get("R"), 1e-3),

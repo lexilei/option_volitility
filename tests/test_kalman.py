@@ -13,7 +13,7 @@ def test_kalman_regression_tracks_beta():
     y = pd.Series(y, index=idx)
     x = pd.Series(x, index=idx)
 
-    _, beta, spread = kalman_regression(y, x, R=1e-3, Q=1e-4)
+    _, beta, spread, _ = kalman_regression(y, x, R=1e-3, Q=1e-4)
     assert beta.iloc[-1] == beta.iloc[-1]  # not NaN
     assert abs(beta.iloc[-1] - 1.5) < 0.3
     assert spread.abs().mean() < 1.0

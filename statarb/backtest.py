@@ -52,6 +52,7 @@ def walk_forward_backtest(
     slippage_bps: float = 2.0,
     proportional: bool = False,
     weight_smooth: float = 0.0,
+    vol_target: float = 0.0,
 ) -> Tuple[pd.Series, pd.DataFrame, pd.DataFrame]:
     """Return equity curve, pair positions, and daily weights."""
     # Drop columns with >20% missing before dropping rows
@@ -102,7 +103,7 @@ def walk_forward_backtest(
             window_prices = prices.loc[train_idx.union(test_idx)]
             y = window_prices[pair.y]
             x = window_prices[pair.x]
-            _, beta_s, spread = kalman_regression(y, x, R=kalman_R, Q=kalman_Q)
+            _, beta_s, spread, innov_z = kalman_regression(y, x, R=kalman_R, Q=kalman_Q)
             lookback = max(10, pair.half_life)
             z = compute_zscore(spread, lookback=lookback)
             pos = generate_pair_positions(z, entry=entry_z, exit=exit_z, stop=stop_z, proportional=proportional)
@@ -144,6 +145,14 @@ def walk_forward_backtest(
         weights = weights.ewm(span=weight_smooth).mean()
 
     aligned_returns = returns.reindex(weights.index).fillna(0.0)
+
+    if vol_target > 0:
+        raw_ret = (weights.shift(1).fillna(0.0) * aligned_returns).sum(axis=1)
+        realized_vol = raw_ret.rolling(21).std() * np.sqrt(252)
+        vol_scalar = (vol_target / realized_vol.clip(lower=0.001)).clip(upper=5.0)
+        vol_scalar = vol_scalar.shift(1).fillna(1.0)
+        weights = weights.mul(vol_scalar, axis=0)
+
     gross_ret = (weights.shift(1).fillna(0.0) * aligned_returns).sum(axis=1)
     costs = apply_costs_from_weights(weights, slippage_bps=slippage_bps)
     net_ret = gross_ret - costs
