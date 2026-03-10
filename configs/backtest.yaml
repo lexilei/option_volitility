@@ -1,0 +1,27 @@
+universe_config: "configs/universe.yaml"
+spy_symbol: "SPY"
+train_window: 252
+step_window: 21
+corr_lookback: 252
+corr_threshold: 0.7
+max_pairs: 20
+pval_thresh: 0.03
+rank_by: "pvalue"
+half_life_min: 3
+half_life_max: 60
+kalman:
+  R: 1e-3
+  Q: 2e-3
+signals:
+  entry_z: 1.5
+  exit_z: 0.5
+  stop_z: 4.0
+  proportional: true
+portfolio:
+  max_pair_w: 0.20
+  w_max: 0.02
+  gross_max: 1.0
+  weight_smooth: 4
+costs:
+  slippage_bps: 1.0
+  commission_per_share: 0.0

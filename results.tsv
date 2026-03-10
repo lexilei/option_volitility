@@ -1,0 +1,2 @@
+commit	status	description
+19b1baa	discard	exp99: half_life_min=5 (Sharpe 1.825 vs 2.103, reverted)

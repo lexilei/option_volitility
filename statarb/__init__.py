@@ -1,0 +1,1 @@
+"""StatArb core package."""
