@@ -19,7 +19,7 @@ signals:
   stop_z: 4.0
   proportional: true
 portfolio:
-  max_pair_w: 0.20
+  max_pair_w: 0.30
   w_max: 0.03
   gross_max: 1.5
   weight_smooth: 4

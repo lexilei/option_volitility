@@ -136,6 +136,9 @@ def select_pairs(
         selected.sort(key=lambda p: p.half_life)
     elif rank_by == "crossings":
         selected.sort(key=lambda p: p.crossings or 0, reverse=True)
+    elif rank_by == "combined":
+        # Rank by pvalue (lower=better) penalized by low crossings
+        selected.sort(key=lambda p: p.pvalue / max(1, p.crossings or 1))
     else:
         raise ValueError(f"Unknown rank_by: {rank_by}")
 
