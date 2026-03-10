@@ -21,7 +21,7 @@ portfolio:
   max_pair_w: 0.20
   w_max: 0.02
   gross_max: 1.0
-  weight_smooth: 3
+  weight_smooth: 4
 costs:
   slippage_bps: 1.0
   commission_per_share: 0.0
