@@ -103,7 +103,7 @@ def walk_forward_backtest(
             y = window_prices[pair.y]
             x = window_prices[pair.x]
             _, beta_s, spread = kalman_regression(y, x, R=kalman_R, Q=kalman_Q)
-            lookback = max(10, pair.half_life * 2)
+            lookback = max(10, pair.half_life)
             z = compute_zscore(spread, lookback=lookback)
             pos = generate_pair_positions(z, entry=entry_z, exit=exit_z, stop=stop_z, proportional=proportional)
             pos = pos.reindex(window_prices.index).fillna(0.0)
