@@ -15,7 +15,7 @@ kalman:
 signals:
   entry_z: 1.5
   exit_z: 0.5
-  stop_z: 3.0
+  stop_z: 4.0
   proportional: true
 portfolio:
   max_pair_w: 0.20
