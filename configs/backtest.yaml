@@ -9,6 +9,7 @@ pval_thresh: 0.03
 rank_by: "pvalue"
 half_life_min: 3
 half_life_max: 60
+min_crossings: 0
 kalman:
   R: 1e-3
   Q: 2e-3

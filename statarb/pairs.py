@@ -81,6 +81,7 @@ def select_pairs(
     pval_thresh: float = 0.05,
     max_pairs: int = 50,
     rank_by: str = "pvalue",
+    min_crossings: int = 0,
 ) -> List[Pair]:
     """Select robust pairs within the same sector."""
     if len(prices) < train_window:
@@ -112,6 +113,8 @@ def select_pairs(
         if not (min_half_life <= half_life <= max_half_life):
             continue
         crossings = estimate_crossings(spread)
+        if crossings < min_crossings:
+            continue
         selected.append(
             Pair(
                 y=y,

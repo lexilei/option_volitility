@@ -125,6 +125,7 @@ def _cmd_backtest(config_path: str, prices_path: str) -> None:
         pval_thresh=cfg.get("pval_thresh", 0.05),
         half_life_min=cfg.get("half_life_min", 2),
         half_life_max=cfg.get("half_life_max", 20),
+        min_crossings=cfg.get("min_crossings", 0),
         rank_by=cfg.get("rank_by", "pvalue"),
         kalman_R=_as_float(cfg.get("kalman", {}).get("R"), 1e-3),
         kalman_Q=_as_float(cfg.get("kalman", {}).get("Q"), 1e-4),

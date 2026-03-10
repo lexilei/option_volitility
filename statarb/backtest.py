@@ -40,6 +40,7 @@ def walk_forward_backtest(
     pval_thresh: float = 0.05,
     half_life_min: int = 2,
     half_life_max: int = 20,
+    min_crossings: int = 0,
     rank_by: str = "pvalue",
     kalman_R: float = 1e-3,
     kalman_Q: float = 1e-4,
@@ -86,6 +87,7 @@ def walk_forward_backtest(
             pval_thresh=pval_thresh,
             max_pairs=max_pairs,
             rank_by=rank_by,
+            min_crossings=min_crossings,
         )
 
         train_ret = returns.reindex(train_idx).dropna(how="any")
@@ -130,6 +132,7 @@ def walk_forward_backtest(
             if date not in step_weights.index:
                 continue
             w = step_weights.loc[date].fillna(0.0)
+            w = neutralize_by_sector(w, sector_map)
             w = neutralize_beta(w, step_betas, target_beta=0.0)
             w = apply_limits(w, w_max=w_max, gross_max=gross_max)
             step_weights.loc[date, w.index] = w
@@ -149,7 +152,7 @@ def walk_forward_backtest(
     if vol_target > 0:
         raw_ret = (weights.shift(1).fillna(0.0) * aligned_returns).sum(axis=1)
         realized_vol = raw_ret.rolling(21).std() * np.sqrt(252)
-        vol_scalar = (vol_target / realized_vol.clip(lower=0.001)).clip(upper=5.0)
+        vol_scalar = (vol_target / realized_vol.clip(lower=0.001)).clip(upper=8.0)
         vol_scalar = vol_scalar.shift(1).fillna(1.0)
         weights = weights.mul(vol_scalar, axis=0)
 
