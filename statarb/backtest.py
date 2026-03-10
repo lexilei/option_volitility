@@ -51,6 +51,7 @@ def walk_forward_backtest(
     gross_max: float = 1.0,
     slippage_bps: float = 2.0,
     proportional: bool = False,
+    weight_smooth: float = 0.0,
 ) -> Tuple[pd.Series, pd.DataFrame, pd.DataFrame]:
     """Return equity curve, pair positions, and daily weights."""
     # Drop columns with >20% missing before dropping rows
@@ -138,6 +139,9 @@ def walk_forward_backtest(
 
     weights = pd.concat(all_weights).sort_index().fillna(0.0)
     pair_positions = pd.concat(all_pair_pos).sort_index().fillna(0.0)
+
+    if weight_smooth > 0:
+        weights = weights.ewm(span=weight_smooth).mean()
 
     aligned_returns = returns.reindex(weights.index).fillna(0.0)
     gross_ret = (weights.shift(1).fillna(0.0) * aligned_returns).sum(axis=1)
