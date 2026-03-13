@@ -15,7 +15,7 @@ kalman:
   Q: 2e-3
 signals:
   entry_z: 1.5
-  exit_z: 0.5
+  exit_z: 0.75
   stop_z: 4.0
   proportional: true
 portfolio:

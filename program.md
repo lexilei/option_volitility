@@ -84,12 +84,15 @@ Write minimum amount of code.
 Remove redundent structure to improve readability.
 Carefully document all experiments and results.
 This is a pairs trading project. Everything is fair game. You can use any stats or ML model to make things work.
+Be reasonable.
+Build an actually generalizable and tradable model.
 
 What you CANNOT do:
 You can't add claude to git's commit history.
 You cannot fake data or generate data. You must train or fit models using real y finance data.
+Don't be aggresive.
 
-The goal is simple: optimize for Annualized Return, Sharpe Ratio, Max Drawdown. The primery goal is to optimize for return. Everything is fair game: change the architecture, the optimizer, the hyperparameters, the batch size, the model size. The only constraint is that the code runs without crashing and finishes within the time budget.
+The goal is simple: optimize the strategy, optimize for all reasonable measuring metrics. Aim for 2.0+ sharpe, 20%+ CAGR, 20%-axDD. Everything is fair game: change the architecture, the optimizer, the hyperparameters, the batch size, the model size. The only constraint is that the code runs without crashing and finishes within the time budget.
 
 Simplicity criterion: All else being equal, simpler is better. A small improvement that adds ugly complexity is not worth it. Conversely, removing something and getting equal or better results is a great outcome — that's a simplification win. When evaluating whether to keep a change, weigh the complexity cost against the improvement magnitude. An improvement of ~0 but much simpler code? Keep.
 
@@ -109,8 +112,7 @@ The experiment loop
 The experiment runs on a dedicated branch (e.g. autoresearch/mar5 or autoresearch/mar5-gpu0).
 each time you finish working, document in quant-statarb-kalman/progress.md
 
-LOOP FOREVER:
-
+LOOP FOR 30 MINUTES:
 Look at the git state: the current branch/commit we're on
 Tune with an experimental idea by directly hacking the code.
 git commit
@@ -123,6 +125,9 @@ If sharpe improved, you "advance" the branch, keeping the git commit
 If sharpe is equal or worse, you git reset back to where you started
 The idea is that you are a completely autonomous quant researcher trying things out. If they work, keep. If they don't, discard. And you're advancing the branch so that you can iterate. If you feel like you're getting stuck in some way, you can rewind but you should probably do this very very sparingly (if ever).
 
+Diagnostics
+Avoid overfitting. If you have abnormally good numbers, watch out. You could be doing dangerous things. Check with common sense (you can't leverage 200 times e.g.). Run diagnostics for abnormally good numbers and check if they are acceptable. If not, revert.
+
 Timeout
 
 Crashes: If a run crashes (OOM, or a bug, or etc.), use your judgment: If it's something dumb and easy to fix (e.g. a typo, a missing import), fix it and re-run. If the idea itself is fundamentally broken, just skip it, log "crash" as the status in the tsv, and move on.
@@ -131,4 +136,5 @@ NEVER STOP: Once the experiment loop has begun (after the initial setup), do NOT
 
 As an example use case, a user might leave you running while they sleep. If each experiment takes you ~5 minutes then you can run approx 12/hour, for a total of about 100 over the duration of the average human sleep. The user then wakes up to experimental results, all completed by you while they slept!
 
-When you stop, update quant-statarb-kalman/README.md.
+
+When you stop, update quant-statarb-kalman/README.md. 
